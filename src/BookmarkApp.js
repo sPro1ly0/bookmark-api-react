@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BookmarksList from './BookmarksList';
+import './BookmarkApp.css';
 import Fab from './Fab';
 
 class BookmarkApp extends Component {

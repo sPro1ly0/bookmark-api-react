@@ -1,4 +1,5 @@
 import React from 'react';
+import './Bookmark.css';
 import Rating from './Rating';
 
 function Bookmark(props) {
