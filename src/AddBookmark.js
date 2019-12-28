@@ -41,7 +41,7 @@ class AddBookmark extends Component {
         e.preventDefault();
         const {title, url, description, rating} = this.state;
         const bookmark = {title, url, description, rating};
-        const url='https://tf-ed-bookmarks-api.herokuapp.com/v3/bookmarks';
+        const urls ='https://tf-ed-bookmarks-api.herokuapp.com/v3/bookmarks';
         const options = {
             method: 'POST',
             body: JSON.stringify(bookmark),
@@ -51,7 +51,7 @@ class AddBookmark extends Component {
             }
         };
 
-        fetch(url, options)
+        fetch(urls, options)
             .then(response => {
                 if(!response.ok) {
                     throw new Error('Something went wrong, please try again later.');
@@ -83,7 +83,7 @@ class AddBookmark extends Component {
             <div className="addbookmark">
                 <h2>Add Bookmark</h2>
                 {error}
-                <form className="addbookmark__form">
+                <form className="addbookmark__form" onSubmit={e => this.handleSubmit(e)}>
                     <label htmlFor="title">Title:</label>
                     <input 
                         value={this.state.title}
