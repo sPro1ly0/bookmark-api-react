@@ -4,7 +4,7 @@ import './Fab.css';
 class Fab extends Component {
     render() {
         return (
-            <div className="fab">
+            <div className="fab" onClick={e => this.props.showForm(true)}>
                 &#43;
             </div>
         );
