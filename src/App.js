@@ -1,73 +1,85 @@
 import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
+import AddBookmark from './AddBookmark/AddBookmark';
+import BookmarkList from './BookmarkList/BookmarkList';
+import Nav from './Nav/Nav';
+import config from './config';
 import './App.css';
-import AddBookmark from './AddBookmark';
-import BookmarkApp from './BookmarkApp';
+import BookmarksContext from './BookmarksContext';
+import Rating from './Rating/Rating';
 
 class App extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      bookmarks: [],
-      showAddForm: false
-    };
+  state = {
+    bookmarks: [],
+    error: null,
   };
 
-  componentDidMount() {
-    const url = 'https://tf-ed-bookmarks-api.herokuapp.com/v3/bookmarks';
-    const options = {
-      method: 'GET',
-      headers: {
-        "Authorization": "Bearer $2a$10$gXbWH/OZmwsSaPAq3R9QL..M9C3teLpvXlVkbrGpDUxQtkwwul1PO",
-        "Content-Type": "application/json"
-      }
-    };
-
-    fetch(url, options)
-      .then(response => {
-        if(!response.ok) {
-          throw new Error('Something went wrong, please try again later.');
-        }
-        return response;
-      })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          bookmarks: data,
-          error: null
-        });
-      })
-      .catch(err => {
-        this.setState({
-          error: err.message
-        });
-      });
-  };
-
-  setShowAddForm(show) {
+  setBookmarks = bookmarks => {
     this.setState({
-      showAddForm: show
-    });
+      bookmarks,
+      error: null,
+    })
   }
 
-  addBookmark(bookmark) {
+  addBookmark = bookmark => {
     this.setState({
-      bookmarks: [...this.state.bookmarks, bookmark],
-      showAddForm: false
-    });
+      bookmarks: [ ...this.state.bookmarks, bookmark ],
+    })
+  }
+
+  deleteBookmark = bookmarkId => {
+    const newBookmarks = this.state.bookmarks.filter(bkmk => 
+      bkmk.id !== bookmarkId
+      )
+      this.setState({
+        bookmarks: newBookmarks
+      })
+  }
+
+  componentDidMount() {
+    fetch(config.API_ENDPOINT, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${config.API_KEY}`
+      }
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(res.status)
+        }
+        return res.json()
+      })
+      .then(this.setBookmarks)
+      .catch(error => this.setState({ error }))
   }
 
   render() {
-    const page = this.state.showAddForm
-      ? <AddBookmark 
-            showForm={show => this.setShowAddForm(show)}
-            handleAdd={bookmark => this.addBookmark(bookmark)} />
-      : <BookmarkApp bookmarks={this.state.bookmarks} showForm={show => this.setShowAddForm(show)} />;
+    const contextValue = {
+      bookmarks: this.state.bookmarks,
+      addBookmark: this.addBookmark,
+      deleteBookmark: this.deleteBookmark,
+    }
 
     return (
-      <div className='App'>
-        {page}
-      </div>
+      <main className='App'>
+        <h1>Bookmarks!</h1>
+        <Rating />
+        <BookmarksContext.Provider value={contextValue}>
+          <Nav />
+          <div className='content' aria-live='polite'>
+            <Route
+              path='/add-bookmark'
+              component={AddBookmark}
+            />
+            <Route
+              exact
+              path='/'
+              component={BookmarkList}
+            />
+          </div>
+        </BookmarksContext.Provider>
+      </main>
     );
   }
 }
