@@ -8,9 +8,7 @@ const Required = () => (
 )
 
 class AddBookmark extends Component {
-  // static defaultProps = {
-  //   onAddBookmark: () => {}
-  // };
+ 
   static contextType = BookmarksContext;
 
   state = {
@@ -28,7 +26,7 @@ class AddBookmark extends Component {
       rating: rating.value,
     }
     this.setState({ error: null })
-    fetch(config.API_ENDPOINT, {
+    fetch(config.API_ENDPOINT_LOCAL, {
       method: 'POST',
       body: JSON.stringify(bookmark),
       headers: {
@@ -64,7 +62,7 @@ class AddBookmark extends Component {
   };
 
   render() {
-    const { error } = this.state
+    const { error } = this.state;
     return (
       <section className='AddBookmark'>
         <h2>Create a bookmark</h2>

@@ -7,6 +7,7 @@ import config from './config';
 import './App.css';
 import BookmarksContext from './BookmarksContext';
 import Rating from './Rating/Rating';
+import EditBookmark from './EditBookmark';
 
 class App extends Component {
   state = {
@@ -36,8 +37,19 @@ class App extends Component {
       })
   }
 
+  updateBookmark = updatedBookmark => {
+    const newBookmarks = this.state.bookmarks.map(bookmark => 
+      (bookmark.id === updatedBookmark.id)
+        ? updatedBookmark
+        : bookmark
+    )
+    this.setState({
+      bookmark: newBookmarks
+    })
+  }
+
   componentDidMount() {
-    fetch(config.API_ENDPOINT, {
+    fetch(config.API_ENDPOINT_LOCAL, {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
@@ -59,6 +71,7 @@ class App extends Component {
       bookmarks: this.state.bookmarks,
       addBookmark: this.addBookmark,
       deleteBookmark: this.deleteBookmark,
+      updateBookmark: this.updateBookmark
     }
 
     return (
@@ -76,6 +89,10 @@ class App extends Component {
               exact
               path='/'
               component={BookmarkList}
+            />
+            <Route
+              path='/edit/:bookmarkId'
+              component={EditBookmark}
             />
           </div>
         </BookmarksContext.Provider>
